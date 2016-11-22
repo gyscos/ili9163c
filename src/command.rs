@@ -2,6 +2,7 @@
 pub enum Command {
     /// NOP
     Nop = 0x00,
+
     /// SWRESET
     SoftwareReset = 0x01,
 
@@ -85,14 +86,14 @@ pub enum Command {
 
     /// PASET
     ///
-    ///Sets the active Y window
+    /// Sets the active Y window
     ///
     /// Takes 4 data bytes: (start_MSB start_LSB end_MSB end_LSB)
     PageAddressSet = 0x2B,
 
     /// RAMWR
     ///
-    ///Writes data to the memory.
+    /// Writes data to the memory.
     ///
     /// Takes all following data bytes until the next command byte.
     MemoryWrite = 0x2C,
@@ -243,4 +244,19 @@ pub enum Command {
     ///
     /// Gamma adjustment E0h and E1h enable control
     GamRSel = 0xF2,
+}
+
+#[repr(u8)]
+pub enum PixelFormat {
+    Bpp16 = 0b0101,
+    Bpp18_1 = 0b0110,
+    Bpp18_3 = 0b1110,
+}
+
+#[repr(u8)]
+pub enum GammaCurve {
+    Curve1 = 1,
+    Curve2 = 2,
+    Curve3 = 4,
+    Curve4 = 8,
 }
