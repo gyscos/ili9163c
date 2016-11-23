@@ -12,6 +12,8 @@
 #[macro_use]
 extern crate std;
 
+extern crate bresenham;
+
 pub mod spi;
 pub mod gpio;
 pub mod command;
@@ -28,11 +30,15 @@ mod tests {
     fn basic() {
         let csx = gpio::DebugPin::new("CSX");
         let dcx = gpio::DebugPin::new("D/CX");
+
         let spi = spi::DebugSerial;
+        // let spi = spi::BitBangingSerial::new(gpio::DebugPin::new("SCK"),
+        //                                      gpio::DebugPin::new("SDA"));
 
         let mut driver = driver::Driver::new(spi, dcx, csx);
 
         driver.clear_screen(0x00);
+        driver.draw_line((0, 0), (20, 10), 0x01);
     }
 
 }

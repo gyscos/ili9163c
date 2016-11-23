@@ -24,6 +24,7 @@ impl Serial for DebugSerial {
     }
 }
 
+// TODO: handle sleep between clock cycles
 pub struct BitBangingSerial<SCK, MOSI>
     where SCK: gpio::Pin,
           MOSI: gpio::Pin

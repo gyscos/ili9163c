@@ -1,6 +1,7 @@
 [package]
+authors = ["Alexandre Bury <alexandre.bury@gmail.com>"]
 name = "ili9163c"
 version = "0.1.0"
-authors = ["Alexandre Bury <alexandre.bury@gmail.com>"]
 
 [dependencies]
+bresenham = "0.1.1"

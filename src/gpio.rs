@@ -36,11 +36,8 @@ use ::std::string::ToString;
 
 #[cfg(test)]
 impl DebugPin {
-
     pub fn new<S: ToString>(name: S) -> Self {
-        DebugPin {
-            name: name.to_string()
-        }
+        DebugPin { name: name.to_string() }
     }
 }
 
