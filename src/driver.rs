@@ -204,6 +204,31 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
 
     pub fn draw_circle(&mut self, (x, y): (u16, u16), radius: u16, color: Color) {
         // TODO: Rasterize the circle as a series of vertical/horizontal lines
+        let mut dx = radius;
+        let mut dy = 0;
+        let mut err: i16 = 0;
+
+        while dx >= dy {
+            self.draw_pixel((x + dx, y + dy), color);
+            self.draw_pixel((x + dy, y + dx), color);
+
+            self.draw_pixel((x - dx, y + dy), color);
+            self.draw_pixel((x - dy, y + dx), color);
+
+            self.draw_pixel((x + dx, y - dy), color);
+            self.draw_pixel((x + dy, y - dx), color);
+
+            self.draw_pixel((x - dx, y - dy), color);
+            self.draw_pixel((x - dy, y - dx), color);
+
+            dy += 1;
+            err += 1 + 2 * dy as i16;
+
+            if 2 * (err - dx as i16) + 1 > 0 {
+                dx -= 1;
+                err += 1 - 2 * dx as i16;
+            }
+        }
     }
 
     pub fn fill_circle(&mut self, (x, y): (u16, u16), radius: u16, color: Color) {

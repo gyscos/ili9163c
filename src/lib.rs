@@ -39,6 +39,7 @@ mod tests {
 
         driver.clear_screen(0x00);
         driver.draw_line((0, 0), (20, 10), 0x01);
+        driver.draw_circle((50, 50), 20, 0x01);
     }
 
 }
