@@ -1,12 +1,20 @@
-use spi;
-use gpio;
-use command::{Command, PixelFormat, GammaCurve};
 
-use sleep;
 
 use bresenham;
+use command::{Command, PixelFormat, GammaCurve};
+use gpio;
+
+use sleep;
+use spi;
 
 type Color = u16;
+
+pub fn parse_color(r: u8, g: u8, b: u8) -> Color {
+    let r = ((r & 0b11111000) as u16) << 8;
+    let g = ((g & 0b11111100) as u16) << 3;
+    let b = ((b & 0b11111000) as u16) >> 3;
+    r | g | b
+}
 
 /// Main structure to manage to LCD board.
 ///
@@ -133,12 +141,11 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         self.write_data(enable as u8);
     }
 
-    // Higher-level functions now
-
     /// Sets the writeable memory window.
     ///
     /// Both start and end are inclusive.
-    pub fn set_window(&mut self, (startx, starty): (u16, u16), (endx, endy): (u16, u16)) {
+    pub fn set_window(&mut self, (startx, starty): (u16, u16),
+                      (endx, endy): (u16, u16)) {
         self.write_cmd(Command::ColumnAddressSet);
         self.write_data_16(startx);
         self.write_data_16(endx);
@@ -148,7 +155,9 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         self.write_data_16(endy);
     }
 
-    pub fn fill_rect(&mut self, (x, y): (u16, u16), (width, height): (u16, u16), color: Color) {
+    // This method is enough to implement all high-level methods
+    pub fn fill_rect(&mut self, (x, y): (u16, u16),
+                     (width, height): (u16, u16), color: Color) {
         self.set_window((x, y), (x + width - 1, y + width - 1));
         self.write_cmd(Command::MemoryWrite);
         for _ in 0..(width * height) {
@@ -156,21 +165,26 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         }
     }
 
+    // High-level interface
+
     // TODO: handle 18-bits colors?
     pub fn clear_screen(&mut self, color: Color) {
         // TODO: hard-code 128x128? Or use some variable?
         self.fill_rect((0, 0), (128, 128), color);
     }
 
-    pub fn draw_hline(&mut self, (x, y): (u16, u16), length: u16, color: Color) {
+    pub fn draw_hline(&mut self, (x, y): (u16, u16), length: u16,
+                      color: Color) {
         self.fill_rect((x, y), (length, 1), color);
     }
 
-    pub fn draw_vline(&mut self, (x, y): (u16, u16), length: u16, color: Color) {
+    pub fn draw_vline(&mut self, (x, y): (u16, u16), length: u16,
+                      color: Color) {
         self.fill_rect((x, y), (1, length), color);
     }
 
-    pub fn draw_rect(&mut self, (x, y): (u16, u16), (width, height): (u16, u16), color: Color) {
+    pub fn draw_rect(&mut self, (x, y): (u16, u16),
+                     (width, height): (u16, u16), color: Color) {
 
         if height > 1 {
             self.draw_hline((x, y + height - 1), width, color);
@@ -190,7 +204,8 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
 
     // TODO: move rasterization to external crate
 
-    pub fn draw_line(&mut self, (x1, y1): (u16, u16), (x2, y2): (u16, u16), color: Color) {
+    pub fn draw_line(&mut self, (x1, y1): (u16, u16), (x2, y2): (u16, u16),
+                     color: Color) {
         // Rasterize the line as a series of vertical/horizontal lines
 
         let start = (x1 as isize, y1 as isize);
@@ -202,7 +217,8 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         self.draw_pixel((x2, y2), color);
     }
 
-    pub fn draw_circle(&mut self, (x, y): (u16, u16), radius: u16, color: Color) {
+    pub fn draw_circle(&mut self, (x, y): (u16, u16), radius: u16,
+                       color: Color) {
         // TODO: Rasterize the circle as a series of vertical/horizontal lines
         let mut dx = radius;
         let mut dy = 0;
@@ -231,11 +247,13 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         }
     }
 
-    pub fn fill_circle(&mut self, (x, y): (u16, u16), radius: u16, color: Color) {
+    pub fn fill_circle(&mut self, (x, y): (u16, u16), radius: u16,
+                       color: Color) {
         // TODO: Rasterize the circle as a series of horizontal lines
     }
 
-    pub fn draw_text(&mut self, (x, y): (u16, u16), size: u16, text: &str, color: Color) {
+    pub fn draw_text(&mut self, (x, y): (u16, u16), size: u16, text: &str,
+                     color: Color) {
         // TODO:
         // load font from external file at compilation time (`include_bytes!`)
     }
