@@ -5,3 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 bresenham = "0.1.1"
+gpio_traits = { git = "https://github.com/gyscos/gpio_traits"}
+
+[dev-dependencies]
+gpio_traits = { git = "https://github.com/gyscos/gpio_traits", features = ["debug"]}

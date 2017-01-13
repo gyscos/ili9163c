@@ -12,12 +12,13 @@
 #[macro_use]
 extern crate std;
 
+extern crate gpio_traits;
 extern crate bresenham;
 
-pub mod spi;
-pub mod gpio;
 pub mod command;
 pub mod driver;
+
+use gpio_traits::{pin,spi};
 
 pub fn sleep(ms: u16) {}
 
@@ -28,8 +29,8 @@ mod tests {
 
     #[test]
     fn basic() {
-        let csx = gpio::DebugPin::new("CSX");
-        let dcx = gpio::DebugPin::new("D/CX");
+        let csx = pin::DebugPin::new("CSX");
+        let dcx = pin::DebugPin::new("D/CX");
 
         let spi = spi::DebugSerial;
         // let spi = spi::BitBangingSerial::new(gpio::DebugPin::new("SCK"),

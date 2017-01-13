@@ -1,11 +1,8 @@
-
-
 use bresenham;
+use gpio_traits::{pin, spi};
 use command::{Command, PixelFormat, GammaCurve};
-use gpio;
 
 use sleep;
-use spi;
 
 type Color = u16;
 
@@ -22,8 +19,8 @@ pub fn parse_color(r: u8, g: u8, b: u8) -> Color {
 /// `CSX` pins, ready for output.
 pub struct Driver<S, DCX, CSX>
     where S: spi::Serial,
-          DCX: gpio::Pin,
-          CSX: gpio::Pin
+          DCX: pin::Output,
+          CSX: pin::Output,
 {
     /// Main data bus
     ///
@@ -47,8 +44,8 @@ pub struct Driver<S, DCX, CSX>
 
 impl<S, DCX, CSX> Driver<S, DCX, CSX>
     where S: spi::Serial,
-          DCX: gpio::Pin,
-          CSX: gpio::Pin
+          DCX: pin::Output,
+          CSX: pin::Output,
 {
     pub fn new(spi: S, dcx: DCX, csx: CSX) -> Self {
 
