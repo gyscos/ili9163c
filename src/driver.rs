@@ -18,7 +18,7 @@ pub fn parse_color(r: u8, g: u8, b: u8) -> Color {
 /// Give this `Driver` an activated SPI device, as well as the `D/CX` and the
 /// `CSX` pins, ready for output.
 pub struct Driver<S, DCX, CSX>
-    where S: spi::Serial,
+    where S: spi::Master,
           DCX: pin::Output,
           CSX: pin::Output,
 {
@@ -43,7 +43,7 @@ pub struct Driver<S, DCX, CSX>
 }
 
 impl<S, DCX, CSX> Driver<S, DCX, CSX>
-    where S: spi::Serial,
+    where S: spi::Master,
           DCX: pin::Output,
           CSX: pin::Output,
 {
@@ -95,7 +95,7 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         self.dcx.low();
 
         self.csx.low();
-        self.spi.write(cmd as u8);
+        self.spi.read_write(cmd as u8);
         self.csx.high();
     }
 
@@ -103,7 +103,7 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         self.dcx.high();
 
         self.csx.low();
-        self.spi.write(data);
+        self.spi.read_write(data);
         self.csx.high();
     }
 
@@ -111,8 +111,8 @@ impl<S, DCX, CSX> Driver<S, DCX, CSX>
         self.dcx.high();
 
         self.csx.low();
-        self.spi.write((data >> 8) as u8);
-        self.spi.write(data as u8);
+        self.spi.read_write((data >> 8) as u8);
+        self.spi.read_write(data as u8);
         self.csx.high();
     }
 
